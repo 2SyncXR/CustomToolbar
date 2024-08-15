@@ -9,7 +9,9 @@ namespace UnityToolbarExtender
 #if UNITY_2020_3_OR_NEWER
     [FilePath("ProjectSettings/CustomToolbarSetting.asset", FilePathAttribute.Location.ProjectFolder)]
     internal class CustomToolbarSetting : ScriptableSingleton<CustomToolbarSetting> {
-        [SerializeReference] List<BaseToolbarElement> _elements = new() {
+        // internal string rootPath = "Packages/com.smkplus.custom-toolbar";
+        
+	    [SerializeReference] List<BaseToolbarElement> _elements = new() {
             new ToolbarEnterPlayMode(),
             new ToolbarSceneSelection(),
             new ToolbarSpace(),

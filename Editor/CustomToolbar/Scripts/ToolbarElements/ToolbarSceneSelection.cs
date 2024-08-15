@@ -13,6 +13,7 @@ internal class ToolbarSceneSelection : BaseToolbarElement {
 	public override string NameInList => "[Dropdown] Scene selection";
 
 	[SerializeField] bool showSceneFolder = true;
+	[SerializeField] bool showAllScenes = false;
 
 	SceneData[] scenesPopupDisplay;
 	string[] scenesPath;
@@ -34,8 +35,21 @@ internal class ToolbarSceneSelection : BaseToolbarElement {
 	}
 
 	protected override void OnDrawInList(Rect position) {
-		position.width = 200.0f;
-		showSceneFolder = EditorGUI.Toggle(position, "Group by folders", showSceneFolder);
+		// float originalValue = EditorGUIUtility.labelWidth;
+		// EditorGUIUtility.labelWidth = 100; 
+		
+		position.width = 100.0f;
+		EditorGUI.LabelField(position, "Group by folders");
+		position.x += position.width + FieldSizeSpace;
+		position.width = 30.0f;
+		showSceneFolder = EditorGUI.Toggle(position, "", showSceneFolder);
+
+		position.x += position.width + FieldSizeSpace;
+		position.width = 100.0f;
+		EditorGUI.LabelField(position, "Show all");
+		position.x += position.width + FieldSizeSpace;
+		position.width = 30.0f;
+		showAllScenes = EditorGUI.Toggle(position, "", showAllScenes);
 	}
 
 	protected override void OnDrawInToolbar() {
@@ -68,30 +82,53 @@ internal class ToolbarSceneSelection : BaseToolbarElement {
 			AddScene(scenesBuildPath[i]);
 		}
 
+		//Scenes inside main folder (eg. "_TheLastGalaxy") and not under Downloads
+		isPlaceSeparator = false;
+		for (int i = 0; i < scenesPath.Length; ++i) {
+			if (scenesPath[i].Contains("/_") && (scenesPath[i].Contains("/_Scenes") || scenesPath[i].Contains("/Scenes")) && !scenesPath[i].Contains("/Downloads")) {
+				PlaceSeperatorIfNeeded();
+				AddScene(scenesPath[i], "Project Scenes");
+			}
+		}
+		
+		//Scenes inside main folder + Downloads (eg. "_TheLastGalaxy/Downloads/*scenes")
+		isPlaceSeparator = false;
+		for (int i = 0; i < scenesPath.Length; ++i) {
+			if (scenesPath[i].Contains("/_") && (scenesPath[i].Contains("/_Scenes") || scenesPath[i].Contains("/Scenes")) && scenesPath[i].Contains("/Downloads")) {
+				PlaceSeperatorIfNeeded();
+				AddScene(scenesPath[i], "Downloaded Demo Scenes");
+			}
+		}
+		
 		//Scenes on Assets/Scenes/
 		isPlaceSeparator = false;
 		for (int i = 0; i < scenesPath.Length; ++i) {
-			if (scenesPath[i].Contains("Assets/Scenes")) {
+			if (scenesPath[i].Contains("2SyncGameBuilder/Scenes") && !scenesPath[i].Contains("/2SyncGameBuilder/Downloads")) {
+				PlaceSeperatorIfNeeded();
+				AddScene(scenesPath[i], "GameBuilder Scenes");
+			}
+		}
+		
+		//Scenes on Assets/Scenes/
+		isPlaceSeparator = false;
+		for (int i = 0; i < scenesPath.Length; ++i) {
+			var syncLibIndex = scenesPath[i].IndexOf("/2SyncLib/", StringComparison.Ordinal);
+			
+			if (syncLibIndex >= 0 && !scenesPath[i].Substring(syncLibIndex).Contains("/Downloads")) {
+				PlaceSeperatorIfNeeded();
+				AddScene(scenesPath[i], "2Sync Scenes");
+			}
+		}
+
+
+		//All other scenes.
+		if (showAllScenes)
+		{
+			isPlaceSeparator = false;
+			for (int i = 0; i < scenesPath.Length; ++i) {
 				PlaceSeperatorIfNeeded();
 				AddScene(scenesPath[i]);
 			}
-		}
-
-		//Scenes on Plugins/Plugins/
-		//Consider them as demo scenes from plugins
-		isPlaceSeparator = false;
-		for (int i = 0; i < scenesPath.Length; ++i) {
-			if (scenesPath[i].Contains("Assets/Plugins/")) {
-				PlaceSeperatorIfNeeded();
-				AddScene(scenesPath[i], "Plugins demo");
-			}
-		}
-
-		//All other scenes.
-		isPlaceSeparator = false;
-		for (int i = 0; i < scenesPath.Length; ++i) {
-			PlaceSeperatorIfNeeded();
-			AddScene(scenesPath[i]);
 		}
 
 		scenesPopupDisplay = toDisplay.ToArray();

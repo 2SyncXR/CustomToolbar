@@ -13,6 +13,7 @@ namespace UnityToolbarExtender
 
 		Vector2 scrollPos;
 		ReorderableList elementsList;
+		
 
 		private class Styles
 		{
@@ -48,14 +49,20 @@ namespace UnityToolbarExtender
 		public override void OnGUI(string searchContext)
 		{
 			base.OnGUI(searchContext);
-
+			
+			// Add configuration for root path
+			// EditorGUILayout.BeginHorizontal();
+			// EditorGUILayout.LabelField("Root path", GUILayout.Width(100));
+			// setting.rootPath = EditorGUILayout.TextField(setting.rootPath);
+			// EditorGUILayout.EndHorizontal();
+			
 			scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 			
 			elementsList = elementsList ?? CustomToolbarReordableList.Create(setting.elements, OnMenuItemAdd);
 			elementsList.DoLayoutList();
 
 			EditorGUILayout.EndScrollView();
-
+			
 			m_toolbarSetting.ApplyModifiedProperties();
 			if (GUI.changed) {
 				EditorUtility.SetDirty(m_toolbarSetting.targetObject);

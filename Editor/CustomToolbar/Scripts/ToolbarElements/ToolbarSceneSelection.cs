@@ -92,11 +92,10 @@ internal class ToolbarSceneSelection : BaseToolbarElement {
 		}
 		
 		//Scenes inside main folder + Downloads (eg. "_TheLastGalaxy/Downloads/*scenes")
-		isPlaceSeparator = false;
 		for (int i = 0; i < scenesPath.Length; ++i) {
 			if (scenesPath[i].Contains("/_") && (scenesPath[i].Contains("/_Scenes") || scenesPath[i].Contains("/Scenes")) && scenesPath[i].Contains("/Downloads")) {
 				PlaceSeperatorIfNeeded();
-				AddScene(scenesPath[i], "Downloaded Demo Scenes");
+				AddScene(scenesPath[i], "Project Demo Scenes");
 			}
 		}
 		
@@ -110,7 +109,6 @@ internal class ToolbarSceneSelection : BaseToolbarElement {
 		}
 		
 		//Scenes on Assets/Scenes/
-		isPlaceSeparator = false;
 		for (int i = 0; i < scenesPath.Length; ++i) {
 			var syncLibIndex = scenesPath[i].IndexOf("/2SyncLib/", StringComparison.Ordinal);
 			

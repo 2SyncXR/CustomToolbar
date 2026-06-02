@@ -33,8 +33,11 @@ namespace UnityToolbarExtender
 			InitElements();
 		}
 
-		public static void InitElements() 
+		public static void InitElements()
 		{
+#if !UNITY_6000_3_OR_NEWER
+			// Unity 6.3 removed the internal UnityEditor.Toolbar type, so the legacy tool-count
+			// reflection and the full-width OnGUI layout path no longer apply (see ToolbarCallback).
 			Type toolbarType = typeof(Editor).Assembly.GetType("UnityEditor.Toolbar");
 
 #if UNITY_2019_1_OR_NEWER
@@ -58,6 +61,7 @@ namespace UnityToolbarExtender
 
 			ToolbarCallback.OnToolbarGUI -= OnGUI;
 			ToolbarCallback.OnToolbarGUI += OnGUI;
+#endif
 			ToolbarCallback.OnToolbarGUILeft -= GUILeft;
 			ToolbarCallback.OnToolbarGUILeft += GUILeft;
 			ToolbarCallback.OnToolbarGUIRight -= GUIRight;
